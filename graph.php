@@ -1,25 +1,4 @@
 <?php
-$palette = array
-(
-0 => "ImageColorAllocate ($im, 0, 0, 0);",
-1 => "ImageColorAllocate ($im, 0, 255, 255);",
-2 => "ImageColorAllocate ($im, 255, 0, 255);",
-3 => "ImageColorAllocate ($im, 0, 0, 255);",
-4 => "ImageColorAllocate ($im, 192, 192, 192);",
-5 => "ImageColorAllocate ($im, 128, 128, 128);",
-6 => "ImageColorAllocate ($im, 0, 128, 128);",
-7 => "ImageColorAllocate ($im, 128, 0, 128);",
-8 => "ImageColorAllocate ($im, 0, 0, 128);",
-9 => "ImageColorAllocate ($im, 255, 255, 0);",
-10 => "ImageColorAllocate ($im, 0, 255, 0);",
-11 => "ImageColorAllocate ($im, 128, 128, 0);",
-12 => "ImageColorAllocate ($im, 0, 128, 0);",
-13 => "ImageColorAllocate ($im, 255, 0, 0);",
-14 => "ImageColorAllocate ($im, 128, 0, 0);",
-15 => "ImageColorAllocate ($im, 255, 255, 255);",
-
-);
-
 function makeline($im,$x1,$y1,$length,$angle,$color)
 {
         $x2 = $x1 + sin( deg2rad($angle) ) * $length;
@@ -144,25 +123,50 @@ function debprint($printme)
 	echo "</pre>";
 }
 
-$im = @ImageCreate (460, 460);
+$im = @ImageCreate (520, 460);
 imageantialias($im, true);
-$background_color = ImageColorAllocate ($im, 255, 255, 255);
-$col1 = ImageColorAllocate ($im, 128, 255, 255);
-$col2 = ImageColorAllocate ($im, 128, 255, 255);
-$col3 = ImageColorAllocate ($im, 0, 255, 255);
-$col4 = ImageColorAllocate ($im, 0, 128, 255);
-//echo "<pre>";
+imagealphablending($im, true);
+
+$background_color = ImageColorAllocate ($im, 0, 0, 0);
+
+$color[1] = ImageColorAllocate ($im, 153, 255, 255);
+$color[2] = ImageColorAllocate ($im, 102, 153, 255);
+$color[3] = ImageColorAllocate ($im, 0, 0, 204);
+$color[4] = ImageColorAllocate ($im, 153, 255, 0);
+$color[5] = ImageColorAllocate ($im, 51, 204, 0);
+$color[6] = ImageColorAllocate ($im, 51, 102, 0);
+$color[7] = ImageColorAllocate ($im, 255, 255, 51);
+$color[8] = ImageColorAllocate ($im, 255, 204, 0);
+$color[9] = ImageColorAllocate ($im, 255, 153, 0);
+$color[10] = ImageColorAllocate ($im, 255, 0, 0);
+$color[11] = ImageColorAllocate ($im, 204, 0, 0);
+$color[12] = ImageColorAllocate ($im, 153, 0, 0);
+$color[13] = ImageColorAllocate ($im, 255, 0, 204);
+$color[14] = ImageColorAllocate ($im, 204, 0, 255);
+$color[15] = ImageColorAllocate ($im, 255, 255, 255);
+
+imagerectangle($im,       490, 0, 515, 15, 15);
+imagefilledrectangle($im, 490, 20, 515, 35, 2);
+imagefilledrectangle($im, 490, 40, 515, 55, 3);
+imagefilledrectangle($im, 490, 60, 515, 75, 4);
+imagefilledrectangle($im, 490, 80, 515, 95, 5);
+imagefilledrectangle($im, 490, 100, 515, 115, 6);
+imagefilledrectangle($im, 490, 120, 515, 135, 7);
+imagefilledrectangle($im, 490, 140, 515, 155, 8);
+imagefilledrectangle($im, 490, 160, 515, 175, 9);
+imagefilledrectangle($im, 490, 180, 515, 195, 10);
+imagefilledrectangle($im, 490, 200, 515, 215, 11);
+imagefilledrectangle($im, 490, 220, 515, 235, 12);
+imagefilledrectangle($im, 490, 240, 515, 255, 13);
+imagefilledrectangle($im, 490, 260, 515, 275, 14);
+imagefilledrectangle($im, 490, 280, 515, 295, 15);
+
 for($i=1;$i<=360;$i++)
 {
 
 	$numofrle = half($handle);
 	$startangle = half($handle) / 10;
 	$angledelta = half($handle) / 10;
-	//echo "numofrlehalfwordsinradial = " . $numofrle . "\n";
-	//echo "radialstartangle = " . half($handle) / 10 . "\n";
-	//echo "radialangledelta = " . half($handle) / 10 . "\n";
-
-//	echo "Radial Number: $i - $startangle degrees - RLEs: " . $numofrle*2 . "\n";
 	
 	$run = 0;
 	// Loop through the radial data packets
@@ -170,27 +174,19 @@ for($i=1;$i<=360;$i++)
 	for($j=1;$j<=$numofrle;$j++)
 	{
 		if ($coords == NULL) $coords = array("x" => 230, "y" => 230);
-		$coords = makeline($im,$coords['x'],$coords['y'],$RLE['run'],$startangle,$RLE['code']);
-		$run += $RLE['run'];
 		$RLE = getrle($handle);
-		//echo "run = " . $RLE['run'] . "\n";
-		//echo "colorcode = " . $RLE['code'] . "\n";
+                $run = $RLE['run'];
+		$code = $RLE['code'];
+                $coords = makeline($im,$coords['x'],$coords['y'],$run,$startangle,$code);
+
 		$RLE = getrle($handle);
-		$run += $RLE['run'];
-		//echo "run = " . $RLE['run'] . "\n";
-		//echo "colorcode = " . $RLE['code'] . "\n";
-		//echo "\n";	
-		$coords = makeline($im,$coords['x'],$coords['y'],$RLE['run'],$startangle,$RLE['code']);
+		$run = $RLE['run'];	
+		$code = $RLE['code'];
+		$coords = makeline($im,$coords['x'],$coords['y'],$run,$startangle,$code);
 
 	}
-//	echo "$run\n";
 }
-//echo "</pre>";
-//makeline($im,230,230,115,90,$col1);
-
-
-
-
 header("Content-type: image/png");
 imagepng($im); 
+
 ?>
